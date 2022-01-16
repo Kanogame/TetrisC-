@@ -18,3 +18,4 @@ C:\ученики\Иванов Александр\TERIS\Tetris\obj\Debug\Tetris.
 C:\ученики\Иванов Александр\TERIS\Tetris\obj\Debug\Tetris.csproj.CoreCompileInputs.cache
 C:\ученики\Иванов Александр\TERIS\Tetris\obj\Debug\Tetris.exe
 C:\ученики\Иванов Александр\TERIS\Tetris\obj\Debug\Tetris.pdb
+C:\ученики\Иванов Александр\TERIS\Tetris\bin\Debug\icon-timer.png

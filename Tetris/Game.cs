@@ -14,14 +14,20 @@ namespace Tetris
         // System.Windows.Forms.Timer
         private Timer timer;
         //timeout ms when moving down
+        private Timer secondsTimer;
         private int normalSpeed;
         //timeout ms when quick moving down
         private int spacespeed;
+
+        private int secondsPassed = 0;
+
+        private AdditionalPanel additionalPanel;
 
         public event Action RepaintRequired;
 
         public Game()
         {
+            additionalPanel = new AdditionalPanel();
             normalSpeed = 170;
             spacespeed = 30;
             field = new Field(rows: 18, columns: 9, padding: 50);
@@ -31,6 +37,16 @@ namespace Tetris
             timer.Interval = normalSpeed;
             timer.Tick += Timer_Tick;
             timer.Start();
+            secondsTimer = new Timer();
+            secondsTimer.Interval = 1000;
+            secondsTimer.Tick += secondsTimer_Tick;
+            secondsTimer.Start();
+        }
+
+        private void secondsTimer_Tick(object sender, EventArgs e)
+        {
+            secondsPassed++;
+            additionalPanel.setSecondsPassed(secondsPassed);
         }
 
         private void Field_NewFiguerCreated()
@@ -67,8 +83,13 @@ namespace Tetris
             }
         }
 
-        public void display(Graphics g, Size containerSize) {
+        public void display(Graphics g, Size containerSize)
+        {
+            var FieldArea = field.GetRectangle(containerSize);
             field.display(g, containerSize);
+            var additionalPanelArea = new Rectangle(FieldArea.Right, FieldArea.Top,
+                containerSize.Width - FieldArea.Right, FieldArea.Height);
+            additionalPanel.display(g, additionalPanelArea);
         }
 
         public void toLeft()

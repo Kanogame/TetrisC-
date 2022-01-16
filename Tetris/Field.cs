@@ -253,6 +253,15 @@ namespace Tetris
             return location;
         }
 
+        public Rectangle GetRectangle(Size ContainerSize)
+        {
+            Point location = getLocation(ContainerSize);
+            int cellsize = getCellSize(ContainerSize);
+            int width = cellsize * columns;
+            int height = cellsize * rows;
+            return new Rectangle(location.X, location.Y, width, height);
+        }
+
         public int Rows
         {
             get

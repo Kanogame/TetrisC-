@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Tetris
 {
@@ -20,5 +22,19 @@ namespace Tetris
             Color.FromArgb(39,144,0), // зеленый
             Color.FromArgb(86,164,0), // светлозеленый
             };
+
+        public static Bitmap ClockImage
+        {
+            get 
+            {
+                if (_clockImage == null)
+                {
+                    string pth = Path.Combine(Application.StartupPath, "icon-timer.png");
+                    _clockImage = new Bitmap(pth);
+                }
+                return _clockImage;
+            }
+        }
+        private static Bitmap _clockImage;
     }
 }
