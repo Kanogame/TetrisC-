@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tetris
 {
-    class Figure
+    public class Figure
     {
         private static int[][][,] figures = new int[][][,] {
             new int [][,] {

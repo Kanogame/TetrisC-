@@ -14,15 +14,16 @@ namespace Tetris
         private int padding;
         private int[,] data;
         private Figure figure;
+        private Figure nextFigure;
         private Point figurePos;
 
-        public event Action NewFiguerCreated;
+        public event NewFigureCreatedDelegate NewFiguerCreated;
 
         private void InvokeNewFiguerCreated()
         {
             if (NewFiguerCreated != null)
             {
-                NewFiguerCreated();
+                NewFiguerCreated(figure, nextFigure);
             }
         }
 
@@ -96,13 +97,18 @@ namespace Tetris
         #region
         public void start()
         {
-            newFigure();
+            newFigure(true);
         }
 
-        private void newFigure()
+        private void newFigure(bool createNextFigure)
         {
-            this.figure = new Figure();
-            this.figurePos = new Point(columns / 2 - 2, 0);
+            if (createNextFigure)
+            {
+                nextFigure = new Figure();
+            }
+            this.figure = nextFigure;
+            this.nextFigure = new Figure();
+            this.figurePos = new Point(columns / 2 - 2, -2);
             InvokeNewFiguerCreated();
         }
 
@@ -122,7 +128,7 @@ namespace Tetris
                 figurePos.Y--;
                 data = dataWithFigure;
                 removeLines();
-                newFigure();
+                newFigure(false);
                 try
                 {
                     int[,] d2 = dataWithFigure;
@@ -206,6 +212,10 @@ namespace Tetris
                             {
                                 int realY = posY + i;
                                 int realX = posX + j;
+                                if (realY < 0)
+                                {
+                                    continue;
+                                }
                                 if (realY < 0 || realX < 0
                                     || realX >= columns
                                     || realY >= rows

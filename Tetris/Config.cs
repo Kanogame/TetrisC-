@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Tetris
 {
-    static class Config
+    public static class Config
     {
         public static Color[] Colors = new Color[] {
                 Color.FromArgb(176,36,195), // светлосиреневый

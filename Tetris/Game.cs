@@ -28,7 +28,7 @@ namespace Tetris
         public Game()
         {
             additionalPanel = new AdditionalPanel();
-            normalSpeed = 170;
+            normalSpeed = 200;
             spacespeed = 30;
             field = new Field(rows: 18, columns: 9, padding: 50);
             field.NewFiguerCreated += Field_NewFiguerCreated;
@@ -49,8 +49,9 @@ namespace Tetris
             additionalPanel.setSecondsPassed(secondsPassed);
         }
 
-        private void Field_NewFiguerCreated()
+        private void Field_NewFiguerCreated(Figure current, Figure next)
         {
+            additionalPanel.setFigure(next);
             if (timer != null)
             {
                 timer.Interval = normalSpeed;
@@ -69,6 +70,8 @@ namespace Tetris
         {
             if(!field.moveFigureDown())
             {
+                timer.Stop();
+                secondsTimer.Stop();
                 MessageBox.Show("Игра окончена, научись играть");
             }
             invokeRepaintRequired();
