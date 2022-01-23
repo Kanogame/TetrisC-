@@ -83,16 +83,32 @@ namespace Tetris
 
         private void removeLines()
         {
+            int cnt = 0;
             while (true)
             {
                 int lineindex = findFullLine();
                 if (lineindex < 0)
                 {
-                    return;
+                    break;
                 }
                 removeLine(lineindex);
+                cnt++;
+            }
+            if (cnt > 0)
+            {
+                invokeLinesRemoved(cnt);
             }
         }
+
+        private void invokeLinesRemoved(int RemoveCount)
+        {
+            if (LinesRemoved != null)
+            {
+                LinesRemoved(RemoveCount);
+            }
+        }
+
+        public event LinesRemovedDelegate LinesRemoved;
 
         #region
         public void start()
@@ -176,7 +192,24 @@ namespace Tetris
         }
         public void rotate()
         {
+            if (figure == null)
+            {
+                return;
+            }
             figure.rotateCW();
+            figure.get();
+            int leftOffset = figure.getLeftOffset();
+            int rightOffset = figure.getRightOffset();
+            int offsetX = 0;
+            int n = 5;
+            if (-figurePos.X > leftOffset)
+            {
+                offsetX = -figurePos.X - leftOffset;
+            }
+            else if (figurePos.X + n - columns > rightOffset)
+            {
+                offsetX = -(figurePos.X + n - columns - rightOffset);
+            }
             try
             {
                 int[,] d = dataWithFigure;

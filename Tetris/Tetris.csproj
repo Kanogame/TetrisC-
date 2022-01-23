@@ -52,6 +52,7 @@
     <Compile Include="Figure.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="HorizontalMovement.cs" />
+    <Compile Include="LinesRemovedDelegate.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -87,6 +88,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="228-2283685_angular2-tetris-transparent-game-over-png.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="icon-timer.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

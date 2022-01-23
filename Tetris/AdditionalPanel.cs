@@ -11,6 +11,24 @@ namespace Tetris
     {
         private int secondsPassed;
         private Figure figure;
+        private int scores;
+        private int linesRemoved;
+        private int level;
+
+        public void setScores(int scores)
+        {
+            this.scores = scores;
+        }
+
+        public void setLinesRemoved(int linesRemoved)
+        {
+            this.linesRemoved = linesRemoved;
+        }
+
+        public void setLevel(int level)
+        {
+            this.level = level;
+        }
 
         public AdditionalPanel()
         {
@@ -61,11 +79,11 @@ namespace Tetris
             using (var f = new Font("Segoe UI", 10))
             {
                 g.DrawString("Очки: ", f, Brushes.Gray, new PointF(rect.X + clockleft, rect.Y + 230));
-                g.DrawString("256", f, Brushes.Gray, new RectangleF(rect.X + 30, rect.Y + 230, 150, 35), stringFormat);
+                g.DrawString(scores.ToString() , f, Brushes.Gray, new RectangleF(rect.X + 30, rect.Y + 230, 150, 35), stringFormat);
                 g.DrawString("Линии: ", f, Brushes.Gray, new PointF(rect.X + clockleft, rect.Y + 260));
-                g.DrawString("56", f, Brushes.Gray, new RectangleF(rect.X + 30, rect.Y + 260, 150, 35), stringFormat);
+                g.DrawString(linesRemoved.ToString() , f, Brushes.Gray, new RectangleF(rect.X + 30, rect.Y + 260, 150, 35), stringFormat);
                 g.DrawString("Уровень: ", f, Brushes.Gray, new PointF(rect.X + clockleft, rect.Y + 290));
-                g.DrawString("6", f, Brushes.Gray, new RectangleF(rect.X + 30, rect.Y + 290, 150, 35), stringFormat);
+                g.DrawString(level.ToString(), f, Brushes.Gray, new RectangleF(rect.X + 30, rect.Y + 290, 150, 35), stringFormat);
             }
             if (figure != null)
             {

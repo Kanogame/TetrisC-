@@ -25,13 +25,22 @@ namespace Tetris
 
         public event Action RepaintRequired;
 
+        private int scores;
+        private int levels;
+        private int linesRemoved;
+
         public Game()
         {
+            levels = 1;
+            scores = 0;
+            linesRemoved = 0;
             additionalPanel = new AdditionalPanel();
+            additionalPanel.setLevel(levels);
             normalSpeed = 200;
             spacespeed = 30;
             field = new Field(rows: 18, columns: 9, padding: 50);
             field.NewFiguerCreated += Field_NewFiguerCreated;
+            field.LinesRemoved += Field_LinesRemoved;
             field.start();
             timer = new Timer();
             timer.Interval = normalSpeed;
@@ -41,6 +50,15 @@ namespace Tetris
             secondsTimer.Interval = 1000;
             secondsTimer.Tick += secondsTimer_Tick;
             secondsTimer.Start();
+        }
+
+        private void Field_LinesRemoved(int removedCount)
+        {
+            linesRemoved += removedCount;
+            scores += removedCount * 100;
+            additionalPanel.setLinesRemoved(linesRemoved);
+            additionalPanel.setScores(scores);
+            invokeRepaintRequired();
         }
 
         private void secondsTimer_Tick(object sender, EventArgs e)
@@ -88,6 +106,8 @@ namespace Tetris
 
         public void display(Graphics g, Size containerSize)
         {
+            //g.DrawImage(Config.GameOverImage, new Rectangle(0, 0, containerSize.Width, containerSize.Height)
+            //    , new Rectangle(0, 0, Config.GameOverImage.Width, Config.GameOverImage.Height), GraphicsUnit.Pixel);
             var FieldArea = field.GetRectangle(containerSize);
             field.display(g, containerSize);
             var additionalPanelArea = new Rectangle(FieldArea.Right, FieldArea.Top,

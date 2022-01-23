@@ -36,5 +36,19 @@ namespace Tetris
             }
         }
         private static Bitmap _clockImage;
+
+        public static Bitmap GameOverImage
+        {
+            get
+            {
+                if (_gameOverImage == null)
+                {
+                    string pth = Path.Combine(Application.StartupPath, "228-2283685_angular2-tetris-transparent-game-over-png.png");
+                    _gameOverImage = new Bitmap(pth);
+                }
+                return _gameOverImage;
+            }
+        }
+        private static Bitmap _gameOverImage;
     }
 }

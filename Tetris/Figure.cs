@@ -228,5 +228,45 @@ namespace Tetris
             return res;
         }
 
+        public int getLeftOffset()
+        {
+            int res = 5;
+            int[,] fig = get();
+            for (int row = 0; row < fig.GetLength(0); row++)
+            {
+                int col;
+                for (col = 0; col < fig.GetLength(1) && fig[row, col] == -1; col++)
+                {
+                    //nothing
+                }
+
+                if (color < res)
+                {
+                    res = col;
+                }
+            }
+            return res;
+        }
+
+        public int getRightOffset()
+        {
+            int res = 5;
+            int[,] fig = get();
+            int n = fig.GetLength(1);
+            for (int row = 0; row < fig.GetLength(0); row++)
+            {
+                int col;
+                for (col = 0; col < fig.GetLength(1) && fig[row, n - col - 1] == -1; col++)
+                {
+                    //nothing
+                }
+
+                if (color < res)
+                {
+                    res = col;
+                }
+            }
+            return res;
+        }
     }
 }
