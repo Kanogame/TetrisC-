@@ -52,6 +52,7 @@
     <Compile Include="Figure.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="HorizontalMovement.cs" />
+    <Compile Include="ImageDrawer.cs" />
     <Compile Include="LinesRemovedDelegate.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

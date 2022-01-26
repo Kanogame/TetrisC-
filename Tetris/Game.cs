@@ -106,8 +106,8 @@ namespace Tetris
 
         public void display(Graphics g, Size containerSize)
         {
-            //g.DrawImage(Config.GameOverImage, new Rectangle(0, 0, containerSize.Width, containerSize.Height)
-            //    , new Rectangle(0, 0, Config.GameOverImage.Width, Config.GameOverImage.Height), GraphicsUnit.Pixel);
+            //var ClientRect = new Rectangle(0, 0, containerSize.Width, containerSize.Height);
+            //ImageDrawer.fit(g, ClientRect, Config.GameOverImage);
             var FieldArea = field.GetRectangle(containerSize);
             field.display(g, containerSize);
             var additionalPanelArea = new Rectangle(FieldArea.Right, FieldArea.Top,
