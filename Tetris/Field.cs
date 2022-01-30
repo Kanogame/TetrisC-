@@ -139,7 +139,7 @@ namespace Tetris
             try
             {
                 int[,] d = dataWithFigure;
-            } catch  (Exception ex)
+            } catch  (Exception)
             {
                 figurePos.Y--;
                 data = dataWithFigure;
@@ -149,7 +149,7 @@ namespace Tetris
                 {
                     int[,] d2 = dataWithFigure;
                 }
-                catch (Exception ex2)
+                catch (Exception)
                 {
                     figure = null;
                     return false;

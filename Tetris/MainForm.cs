@@ -18,6 +18,7 @@ namespace Tetris
 
         private bool toRight;
         private bool toLeft;
+        private TetrisOneLove killer;
 
         public MainForm()
         {
@@ -25,6 +26,7 @@ namespace Tetris
             HorizontalMovement = HorizontalMovement.NoMovement;
             game = new Game();
             game.RepaintRequired += Game_RepaintRequired;
+            game = new Game(Killer);
         }
 
         private void Game_RepaintRequired()

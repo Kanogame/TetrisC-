@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -26,11 +27,16 @@ namespace Tetris
         public event Action RepaintRequired;
 
         private int scores;
+        private GamesState gamesState;
         private int levels;
         private int linesRemoved;
 
-        public Game()
+        private TetrisOneLove killer;
+
+        public Game(TetrisOneLove killer)
         {
+            this.killer = killer;
+            gamesState = GamesState.Gaming;
             levels = 1;
             scores = 0;
             linesRemoved = 0;
@@ -90,7 +96,12 @@ namespace Tetris
             {
                 timer.Stop();
                 secondsTimer.Stop();
-                MessageBox.Show("Игра окончена, научись играть");
+                if (MessageBox.Show("Игра окончена, научись играть", "вопрос", MessageBoxButtons.YesNoCancel) !=DialogResult.Yes)
+                {
+                    MessageBox.Show("Врать не хорошо");
+                    killer.kill();
+                }
+                gamesState = GamesState.GameOver;
             }
             invokeRepaintRequired();
         }
@@ -106,13 +117,19 @@ namespace Tetris
 
         public void display(Graphics g, Size containerSize)
         {
-            //var ClientRect = new Rectangle(0, 0, containerSize.Width, containerSize.Height);
-            //ImageDrawer.fit(g, ClientRect, Config.GameOverImage);
-            var FieldArea = field.GetRectangle(containerSize);
-            field.display(g, containerSize);
-            var additionalPanelArea = new Rectangle(FieldArea.Right, FieldArea.Top,
-                containerSize.Width - FieldArea.Right, FieldArea.Height);
-            additionalPanel.display(g, additionalPanelArea);
+            var ClientRect = new Rectangle(0, 0, containerSize.Width, containerSize.Height);
+            if (gamesState == GamesState.GameOver)
+            {
+                ImageDrawer.fit(g, ClientRect, Config.GameOverImage);
+            }
+            else
+            {
+                var FieldArea = field.GetRectangle(containerSize);
+                field.display(g, containerSize);
+                var additionalPanelArea = new Rectangle(FieldArea.Right, FieldArea.Top,
+                    containerSize.Width - FieldArea.Right, FieldArea.Height);
+                additionalPanel.display(g, additionalPanelArea);
+            }
         }
 
         public void toLeft()
