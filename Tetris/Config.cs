@@ -50,5 +50,19 @@ namespace Tetris
             }
         }
         private static Bitmap _gameOverImage;
+
+        public static Bitmap MainMenu
+        {
+            get
+            {
+                if (_mainmenu == null)
+                {
+                    string pth = Path.Combine(Application.StartupPath, "2020_04_tetris-8k-hd-iphone-pc-photos-pictures-backgrounds.jpg");
+                    _mainmenu = new Bitmap(pth);
+                }
+                return _mainmenu;
+            }
+        }
+        private static Bitmap _mainmenu;
     }
 }

@@ -40,36 +40,16 @@ namespace Tetris
             double imgaAspectRatio = (double)img.Width / img.Height;
             Rectangle srcRect, destRect;
             destRect = rect;
-            if (areaAspectRatio < imgaAspectRatio)
+            if (areaAspectRatio > imgaAspectRatio)
             {
                 int PartHeight = (int)(img.Width / areaAspectRatio);
                 int verticalPadding = (img.Height - PartHeight) / 2;
-                /*
-                if (verticalPadding < 0)
-                {
-                    verticalPadding = 0;
-                }
-                if (PartHeight - verticalPadding < 0)
-                {
-                    PartHeight = img.Height - verticalPadding;
-                }
-                */
                 srcRect = new Rectangle(0, verticalPadding, img.Width, PartHeight);
             }
             else
             {
-                int PartWidth = (int)(rect.Height * imgaAspectRatio);
+                int PartWidth = (int)(img.Height * areaAspectRatio);
                 int horizontalPadding = (img.Width - PartWidth) / 2;
-                /*
-                if (horizontalPadding < 0)
-                {
-                    horizontalPadding = 0;
-                }
-                if (PartWidth - horizontalPadding < 0)
-                {
-                    PartWidth = img.Width - horizontalPadding;
-                }
-                */
                 srcRect = new Rectangle(horizontalPadding, 0, PartWidth, img.Height);
             }
             g.DrawImage(img, destRect, srcRect, GraphicsUnit.Pixel);

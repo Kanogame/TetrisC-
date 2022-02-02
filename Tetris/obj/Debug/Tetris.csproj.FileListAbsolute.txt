@@ -20,3 +20,4 @@ C:\ученики\Иванов Александр\TERIS\Tetris\obj\Debug\Tetris.
 C:\ученики\Иванов Александр\TERIS\Tetris\obj\Debug\Tetris.pdb
 C:\ученики\Иванов Александр\TERIS\Tetris\bin\Debug\icon-timer.png
 C:\ученики\Иванов Александр\TERIS\Tetris\bin\Debug\228-2283685_angular2-tetris-transparent-game-over-png.png
+C:\ученики\Иванов Александр\TERIS\Tetris\bin\Debug\2020_04_tetris-8k-hd-iphone-pc-photos-pictures-backgrounds.jpg

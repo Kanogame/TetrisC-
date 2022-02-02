@@ -18,15 +18,15 @@ namespace Tetris
 
         private bool toRight;
         private bool toLeft;
-        private TetrisOneLove killer;
+        private TetrisOneLove some;
 
         public MainForm()
         {
             InitializeComponent();
+            //some = new TetrisOneLove(this.Handle.ToInt32());
             HorizontalMovement = HorizontalMovement.NoMovement;
-            game = new Game();
+            game = new Game(some);
             game.RepaintRequired += Game_RepaintRequired;
-            game = new Game(Killer);
         }
 
         private void Game_RepaintRequired()

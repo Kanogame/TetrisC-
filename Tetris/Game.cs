@@ -30,12 +30,14 @@ namespace Tetris
         private GamesState gamesState;
         private int levels;
         private int linesRemoved;
+        private MainMenu mainMenu; 
 
-        private TetrisOneLove killer;
+        //private TetrisOneLove TetrisOneLove;
 
         public Game(TetrisOneLove killer)
         {
-            this.killer = killer;
+            this.mainMenu = new MainMenu();
+            //this.TetrisOneLove = killer;
             gamesState = GamesState.Gaming;
             levels = 1;
             scores = 0;
@@ -99,7 +101,7 @@ namespace Tetris
                 if (MessageBox.Show("Игра окончена, научись играть", "вопрос", MessageBoxButtons.YesNoCancel) !=DialogResult.Yes)
                 {
                     MessageBox.Show("Врать не хорошо");
-                    killer.kill();
+                    //TetrisOneLove.kill();
                 }
                 gamesState = GamesState.GameOver;
             }
@@ -118,18 +120,19 @@ namespace Tetris
         public void display(Graphics g, Size containerSize)
         {
             var ClientRect = new Rectangle(0, 0, containerSize.Width, containerSize.Height);
+
+            mainMenu.display(g, ClientRect);
+            return;
+
             if (gamesState == GamesState.GameOver)
             {
                 ImageDrawer.fit(g, ClientRect, Config.GameOverImage);
             }
-            else
-            {
                 var FieldArea = field.GetRectangle(containerSize);
                 field.display(g, containerSize);
                 var additionalPanelArea = new Rectangle(FieldArea.Right, FieldArea.Top,
                     containerSize.Width - FieldArea.Right, FieldArea.Height);
-                additionalPanel.display(g, additionalPanelArea);
-            }
+                additionalPanel.display(g, additionalPanelArea, gamesState);
         }
 
         public void toLeft()
