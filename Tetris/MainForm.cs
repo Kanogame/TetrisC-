@@ -43,6 +43,7 @@ namespace Tetris
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
         {
+            game.setRectangle(ClientRectangle);
             Invalidate();
         }
 
@@ -117,6 +118,16 @@ namespace Tetris
         private void keyboardtimer_Tick(object sender, EventArgs e)
         {
             MakeMovement(this.HorizontalMovement);
+        }
+
+        private void MainForm_MouseMove(object sender, MouseEventArgs e)
+        {
+            game.mouseMove(e.Location);
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            game.setRectangle(ClientRectangle);
         }
     }
 }

@@ -11,38 +11,75 @@ namespace Tetris
     {
 
         private string[] buttons;
+        private Rectangle rect;
+        private ButtonPositioner positioner;
+        private int currentButton;
 
         public MainMenu()
         {
+            currentButton = -1;
+            rect = new Rectangle(0, 0, 100, 100);
             buttons = new string[]
             {
-                "одиночная игра",
-                "мультиплеер",
-                "выход"
-            }; 
+                "Одиночная игра",
+                "Хардкор",
+                "Выход"
+            };
+            positioner = new ButtonPositioner(buttons.Length, buttonWidth: 170, buttonHeight: 38, spaceBetween: 20);
         }
 
-        public void display(Graphics g, Rectangle rect)
+        public void display(Graphics g)
         {
             ImageDrawer.cover(g, rect, Config.MainMenu);
-            const int btnWidth = 170;
-            const int btnHeight = 38;
-            int btnCount = buttons.Length;
-            int spaceBetween = 20;
-            int Px = (rect.Width - btnWidth) / 2;
-            int Py = (rect.Height - btnHeight * btnCount - spaceBetween * (btnCount - 1)) / 2;
-            int next = btnHeight + spaceBetween;
+            var SFormat = new StringFormat();
+            SFormat.Alignment = StringAlignment.Center;
+            SFormat.LineAlignment = StringAlignment.Center;
             using (var b = new SolidBrush(Color.FromArgb(150, 255, 255, 255)))
-                for (int i = 0; i < btnCount; i++)
+            {
+                using (var b2 = new SolidBrush(Color.FromArgb(200, 255, 255, 255)))
                 {
-                    var btnRect = new Rectangle(Px, Py + next * i, btnWidth, btnHeight);
-                    g.FillRectangle(b, btnRect.X, btnRect.Y, btnWidth, btnHeight);
-                    g.DrawRectangle(Pens.Gray, Px, Py + next * i, btnWidth, btnHeight);
+                    g.FillRectangle(b, positioner.PointX - 10, positioner.PointY - 40, positioner.ButtonWidth + 20, positioner.ButtonHeight * 5 + 20);
+                    for (int i = 0; i < positioner.ButtonCount; i++)
+                    {
+                        var btnRect = positioner.getButtonRect(i);
+                        var requariedBrush = currentButton == i ? b2 : b;
+                        g.FillRectangle(requariedBrush, btnRect);
+                        using (var f = new Font("Segoe UI", 12))
+                        {
+                            g.DrawString(buttons[i], f, Brushes.Black, btnRect, SFormat);
+                        }
+                    }
                 }
+            }
             using (var f = new Font("Segoe UI", 14))
             {
-                g.DrawString("Tetris Kanogamesa", f, Brushes.Gray, new PointF(Px, Py - 37));
+                g.DrawString("Tetris Kanogamesa", f, Brushes.Black, new PointF(positioner.PointX, positioner.PointY - 37));
             }
+        }
+        public void mouseMove(Point mousePos)
+        {
+            int newcurrentButton = positioner.getButtonIndex(mousePos);
+            if (newcurrentButton != currentButton)
+            {
+                currentButton = newcurrentButton;
+                invokeRepaintRequired();
+            }
+        }
+
+        public event Action RepaintRequired;
+
+        public void invokeRepaintRequired()
+        {
+            if (RepaintRequired != null)
+            {
+                RepaintRequired();
+            }
+        }
+
+        public void setRectangle(Rectangle rect)
+        {
+            this.rect = rect;
+            positioner.setRectangle(rect);
         }
     }
 }

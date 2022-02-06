@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdditionalPanel.cs" />
+    <Compile Include="ButtonPositioner.cs" />
     <Compile Include="MainMenu.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Field.cs" />

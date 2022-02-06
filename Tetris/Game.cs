@@ -37,8 +37,9 @@ namespace Tetris
         public Game(TetrisOneLove killer)
         {
             this.mainMenu = new MainMenu();
+            this.mainMenu.RepaintRequired += invokeRepaintRequired;
             //this.TetrisOneLove = killer;
-            gamesState = GamesState.Gaming;
+            gamesState = GamesState.Menu;
             levels = 1;
             scores = 0;
             linesRemoved = 0;
@@ -49,11 +50,14 @@ namespace Tetris
             field = new Field(rows: 18, columns: 9, padding: 50);
             field.NewFiguerCreated += Field_NewFiguerCreated;
             field.LinesRemoved += Field_LinesRemoved;
-            field.start();
             timer = new Timer();
             timer.Interval = normalSpeed;
             timer.Tick += Timer_Tick;
-            timer.Start();
+            if (gamesState == GamesState.Gaming)
+            {
+                timer.Start();
+                field.start();
+            }
             secondsTimer = new Timer();
             secondsTimer.Interval = 1000;
             secondsTimer.Tick += secondsTimer_Tick;
@@ -121,7 +125,7 @@ namespace Tetris
         {
             var ClientRect = new Rectangle(0, 0, containerSize.Width, containerSize.Height);
 
-            mainMenu.display(g, ClientRect);
+            mainMenu.display(g);
             return;
 
             if (gamesState == GamesState.GameOver)
@@ -156,6 +160,19 @@ namespace Tetris
         public void quick()
         {
             timer.Interval = spacespeed;
+        }
+
+        public void mouseMove(Point mousePos)
+        {
+            if (gamesState == GamesState.Menu)
+            {
+                mainMenu.mouseMove(mousePos);
+            }
+        }
+
+        public void setRectangle(Rectangle rect)
+        {
+            mainMenu.setRectangle(rect);
         }
     }
 }
