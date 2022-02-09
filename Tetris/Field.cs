@@ -12,6 +12,7 @@ namespace Tetris
         private int rows;
         private int columns;
         private int padding;
+
         private int[,] data;
         private Figure figure;
         private Figure nextFigure;
@@ -34,13 +35,6 @@ namespace Tetris
             this.padding = padding;
 
             this.data = new int[rows, columns];
-            for (int i = 0; i < data.GetLength(0); i++)
-            {
-                for (int j = 0; j < data.GetLength(1); j++)
-                {
-                    data[i, j] = -1;
-                }
-            }
         }
         private bool lineIsFull(int lineindex)
         {
@@ -52,6 +46,17 @@ namespace Tetris
                 }
             }
             return true;
+        }
+
+        private void clearData()
+        {
+            for (int i = 0; i < data.GetLength(0); i++)
+            {
+                for (int j = 0; j < data.GetLength(1); j++)
+                {
+                    data[i, j] = -1;
+                }
+            }
         }
 
         private int findFullLine()
@@ -114,6 +119,7 @@ namespace Tetris
         public void start()
         {
             newFigure(true);
+            clearData();
         }
 
         private void newFigure(bool createNextFigure)

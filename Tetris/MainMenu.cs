@@ -14,23 +14,41 @@ namespace Tetris
         private Rectangle rect;
         private ButtonPositioner positioner;
         private int currentButton;
+        public event WhichButtonDelegate HoverButtonDelegate;
+        public event WhichButtonDelegate ButtonClick;
+        private Image Bgimage;
 
-        public MainMenu()
+        public MainMenu(string[] buttons, int ButtonWidth,int ButtonHeight, int spasebetweet, Image bgImage = null)
         {
+            this.Bgimage = bgImage;
             currentButton = -1;
             rect = new Rectangle(0, 0, 100, 100);
-            buttons = new string[]
+            this.buttons = buttons;
+            positioner = new ButtonPositioner(buttons.Length, ButtonWidth, ButtonHeight, spasebetweet);
+        }
+
+        private void invokeHoverButtonChanged(int ButtonIndex)
+        {
+            if (HoverButtonDelegate != null)
             {
-                "Одиночная игра",
-                "Хардкор",
-                "Выход"
-            };
-            positioner = new ButtonPositioner(buttons.Length, buttonWidth: 170, buttonHeight: 38, spaceBetween: 20);
+                HoverButtonDelegate(ButtonIndex);
+            }
+        }
+
+        private void invokeButtonClicked(int  Buttonindex)
+        {
+            if (ButtonClick != null)
+            {
+                ButtonClick(Buttonindex);
+            }
         }
 
         public void display(Graphics g)
         {
-            ImageDrawer.cover(g, rect, Config.MainMenu);
+            if (Bgimage != null)
+            {
+                ImageDrawer.cover(g, rect, Bgimage);
+            }
             var SFormat = new StringFormat();
             SFormat.Alignment = StringAlignment.Center;
             SFormat.LineAlignment = StringAlignment.Center;
@@ -62,8 +80,18 @@ namespace Tetris
             if (newcurrentButton != currentButton)
             {
                 currentButton = newcurrentButton;
+                invokeHoverButtonChanged(currentButton);
                 invokeRepaintRequired();
             }
+        }
+
+        public void click(Point mousePos)
+        {
+            int btn = positioner.getButtonIndex(mousePos);
+            if (btn != -1)
+            {
+                invokeButtonClicked(btn);
+            }    
         }
 
         public event Action RepaintRequired;

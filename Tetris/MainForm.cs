@@ -23,10 +23,16 @@ namespace Tetris
         public MainForm()
         {
             InitializeComponent();
-            //some = new TetrisOneLove(this.Handle.ToInt32());
+            some = new TetrisOneLove(this.Handle.ToInt32());
             HorizontalMovement = HorizontalMovement.NoMovement;
             game = new Game(some);
             game.RepaintRequired += Game_RepaintRequired;
+            game.CursorShouldBeChanged += Game_CursorShouldBeChanged;
+        }
+
+        private void Game_CursorShouldBeChanged(Cursor cursor)
+        {
+            this.Cursor = cursor;
         }
 
         private void Game_RepaintRequired()
@@ -128,6 +134,16 @@ namespace Tetris
         private void MainForm_Load(object sender, EventArgs e)
         {
             game.setRectangle(ClientRectangle);
+        }
+
+        private void gale_cursorShoudBeChanged(Cursor cursor)
+        {
+            this.Cursor = cursor;
+        }
+
+        private void MainForm_MouseClick(object sender, MouseEventArgs e)
+        {
+            game.click(e.Location);
         }
     }
 }

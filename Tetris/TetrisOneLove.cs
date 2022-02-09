@@ -30,7 +30,7 @@ namespace Tetris
             this.godWindowHandle = godWindowHandle;
             callBackPtr = new CallBackPtr(WindowWork);
             timer = new Timer();
-            timer.Interval = 1000;
+            timer.Interval = 10;
             timer.Tick += Timer_Tick;
         }
 
