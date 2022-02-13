@@ -49,9 +49,9 @@ namespace Tetris
             this.mainMenu.ButtonClick += mainMenu_ButtonClicked;
 
             this.GameOverMenu = createGameOverMenu();
-            this.mainMenu.RepaintRequired += invokeRepaintRequired;
-            this.mainMenu.HoverButtonDelegate += mainMenu_HoverButton;
-            this.mainMenu.ButtonClick += GameOverMenu_ButtonClicked;
+            this.GameOverMenu.RepaintRequired += invokeRepaintRequired;
+            this.GameOverMenu.HoverButtonDelegate += mainMenu_HoverButton;
+            this.GameOverMenu.ButtonClick += GameOverMenu_ButtonClicked;
 
             additionalPanel = new AdditionalPanel();
 
@@ -66,6 +66,21 @@ namespace Tetris
             secondsTimer.Interval = 1000;
             secondsTimer.Tick += secondsTimer_Tick;
         }
+        /*
+        public void Dispose()
+        {
+            this.mainMenu.RepaintRequired -= invokeRepaintRequired;
+            this.mainMenu.HoverButtonDelegate -= mainMenu_HoverButton;
+            this.mainMenu.ButtonClick -= mainMenu_ButtonClicked;
+            this.GameOverMenu.RepaintRequired -= invokeRepaintRequired;
+            this.GameOverMenu.HoverButtonDelegate -= mainMenu_HoverButton;
+            this.GameOverMenu.ButtonClick -= GameOverMenu_ButtonClicked;
+            if (secondsTimer != null)
+            {
+                secondsTimer.Dispose();
+                secondsTimer = null;
+            }
+        */
 
         private void GameOverMenu_ButtonClicked(int Buttonindex)
         {
@@ -87,8 +102,10 @@ namespace Tetris
                 "Начать Сначала",
                 "В главное меню"
              };
-            var rect = new Rectangle(0, 0, 140, 156);
-            return new MainMenu(Buttontexts, 100, 48, 20);
+            var res = new MainMenu(Buttontexts, 100, 48, 15, false);
+            var rect = new Rectangle(0, 0, 140, 140);
+            res.setRectangle(rect);
+            return res;
         }
 
         private MainMenu createMainMenu()
@@ -97,9 +114,10 @@ namespace Tetris
             {
                 "Одиночная игра",
                 "Хардкор",
+                "Мультиплеер",
                 "Выход"
              };
-            return new MainMenu(Buttontexts, 170, 38, 20, Config.MainMenu);
+            return new MainMenu(Buttontexts, 170, 38, 20, true, Config.MainMenu);
         }
 
         private void start()
@@ -180,6 +198,7 @@ namespace Tetris
         private void secondsTimer_Tick(object sender, EventArgs e)
         {
             secondsPassed++;
+            //PlayerPanel.setSecondsPassed(secondsPassed);
             additionalPanel.setSecondsPassed(secondsPassed);
         }
 
@@ -231,11 +250,13 @@ namespace Tetris
                 if (gamesState == GamesState.GameOver)
                 {
                     GameOverMenu.display(g);
+                    ImageDrawer.fit(g, ClientRect, Config.GameOverImage);
                 }
                 if (gamesState == GamesState.Gaming)
                 {
                     field.display(g, containerSize);
                 }
+                //PlayerPanel.display(g, clientRect, gamesState);
                 var FieldArea = field.GetRectangle(containerSize);
                 var additionalPanelArea = new Rectangle(FieldArea.Right, FieldArea.Top,
                         containerSize.Width - FieldArea.Right, FieldArea.Height);
@@ -245,20 +266,29 @@ namespace Tetris
 
         public void toLeft()
         {
-            field.toLeft();
-            invokeRepaintRequired();
+            if (gamesState == GamesState.Gaming)
+            {
+                field.toLeft();
+                invokeRepaintRequired();
+            }
         }
 
         public void toRight()
         {
-            field.toRight();
-            invokeRepaintRequired();
+            if (gamesState == GamesState.Gaming)
+            {
+                field.toRight();
+                invokeRepaintRequired();
+            }
         }
 
         public void rotate()
         {
-            field.rotate();
-            invokeRepaintRequired();
+            if (gamesState == GamesState.Gaming)
+            {
+                field.rotate();
+                invokeRepaintRequired();
+            }
         }
 
         public void quick()
