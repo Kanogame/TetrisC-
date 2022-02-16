@@ -14,10 +14,16 @@ namespace Tetris
         private int scores;
         private int linesRemoved;
         private int level;
+        private Rectangle rect;
 
         public void setScores(int scores)
         {
             this.scores = scores;
+        }
+
+        public void setRectangle(Rectangle rect)
+        {
+            this.rect = rect;
         }
 
         public void setLinesRemoved(int linesRemoved)
@@ -54,7 +60,7 @@ namespace Tetris
             return $"{mmPadded}{":"}{ssPadded}";
         }
 
-        public void display(Graphics g, Rectangle rect, GamesState gamesState)
+        public void display(Graphics g, GamesState gamesState)
         {
             bool GameIsOver = gamesState == GamesState.GameOver;
             Brush Brush = GameIsOver ? Brushes.Black : Brushes.Gray;

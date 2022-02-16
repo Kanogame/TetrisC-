@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace Tetris
         public event Action RepaintRequired;
         public event Action GameOverForPlayer;
 
-        public PlayerPanel()
+        public PlayerPanel(Rectangle rect)
         {
             additionalPanel = new AdditionalPanel();
 
@@ -33,6 +34,17 @@ namespace Tetris
 
             MoveDownTimer = new Timer();
             MoveDownTimer.Tick += Timer_Tick;
+
+            setRectangle(rect);
+        }
+
+        public void setRectangle(Rectangle rect)
+        {
+            field.setRectangle(rect);
+            var FieldArea = field.getFieldArea();
+            var additionalPanelArea = new Rectangle(FieldArea.Right, FieldArea.Top,
+                    rect.Right - FieldArea.Right, FieldArea.Height);
+            additionalPanel.setRectangle(additionalPanelArea);
         }
 
         public void  start()
@@ -136,14 +148,12 @@ namespace Tetris
         {
                 MoveDownTimer.Interval = spacespeed;
         }
-        /*
+        
         public void display(Graphics g, Rectangle rect, GamesState gamesState)
         {
-                var FieldArea = field.GetRectangle(containerSize);
-                var additionalPanelArea = new Rectangle(FieldArea.Right, FieldArea.Top,
-                        containerSize.Width - FieldArea.Right, FieldArea.Height);
-                additionalPanel.display(g, additionalPanelArea, gamesState);
+            field.display(g);
+            additionalPanel.display(g, gamesState);
         }
-        */
+        
     }
 }

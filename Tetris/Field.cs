@@ -17,6 +17,10 @@ namespace Tetris
         private Figure figure;
         private Figure nextFigure;
         private Point figurePos;
+        private Rectangle rect;
+
+        private int cellSize;
+        private Rectangle FieldArea;
 
         public event NewFigureCreatedDelegate NewFiguerCreated;
 
@@ -120,6 +124,13 @@ namespace Tetris
         {
             newFigure(true);
             clearData();
+        }
+
+        public void setRectangle(Rectangle rect)
+        {
+            this.rect = rect;
+            var r = getFieldAreaRectangle(rect.Size);
+            this.FieldArea = new Rectangle(rect.Left + r.Left, rect.Top + r.Top, r.Width, r.Height);
         }
 
         private void newFigure(bool createNextFigure)
@@ -291,7 +302,7 @@ namespace Tetris
             return cellSize;
         }
 
-        public Point getLocation(Size containerSize)
+        private Point getFieldAreaLocation (Size containerSize)
         {
             int w = containerSize.Width;
             int h = containerSize.Height;
@@ -302,9 +313,14 @@ namespace Tetris
             return location;
         }
 
-        public Rectangle GetRectangle(Size ContainerSize)
+        public Rectangle getFieldArea()
         {
-            Point location = getLocation(ContainerSize);
+            return FieldArea;
+        }
+
+        private Rectangle getFieldAreaRectangle(Size ContainerSize)
+        {
+            Point location = getFieldAreaLocation(ContainerSize);
             int cellsize = getCellSize(ContainerSize);
             int width = cellsize * columns;
             int height = cellsize * rows;
@@ -327,12 +343,10 @@ namespace Tetris
             }
         }
 
-        public void display(Graphics g, Size containerSize)
+        public void display(Graphics g)
         {
-            int cellSize = getCellSize(containerSize);
-            Point location = getLocation(containerSize);
-            int left = location.X;
-            int top = location.Y;
+            int left = FieldArea.X;
+            int top = FieldArea.Y;
             int[,] d = dataWithFigure;
             for (int i = 0; i < rows; i++)
             {
@@ -349,7 +363,6 @@ namespace Tetris
                                 top + i * cellSize,
                                 cellSize,
                                 cellSize);
-                            //g.FillRectangle(Brushes.Blue, 0, 0, j * cellSize, i * cellSize);
                         }
                     }
                     using (Pen pen = new Pen(Color.FromArgb(215, 215, 215)))

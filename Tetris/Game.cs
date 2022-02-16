@@ -11,37 +11,29 @@ namespace Tetris
 {
     class Game : IDisposable
     {
-        private Field field;
-        // System.Windows.Forms.Timer
-        private Timer MoveDownTimer;
-        //timeout ms when moving down
         private Timer secondsTimer;
-        private int normalSpeed;
-        private int spacespeed;
+
+        private MainMenu mainMenu;
+        private MainMenu GameOverMenu;
+        private TetrisOneLove TetrisOneLove;
+        private PlayerPanel[] playerPanels;
+        private Rectangle rect;
+
+        private int secondsPassed = 0;
 
         private GamesState gamesState;
         private Cursor cursor;
 
-        private int secondsPassed = 0;
-
-        private AdditionalPanel additionalPanel;
-        private MainMenu mainMenu;
-        private MainMenu GameOverMenu;
-
         public event CursorchangeDelegate CursorShouldBeChanged;
         public event Action RepaintRequired;
 
-        private int scores;
-        private int levels;
-        private int linesRemoved;
-
-        private TetrisOneLove TetrisOneLove;
-
         public Game(TetrisOneLove killer)
         {
+            this.rect = new Rectangle(0, 0, 100, 100);
             this.cursor = Cursors.Arrow;
             gamesState = GamesState.Menu;
             this.TetrisOneLove = killer;
+            this.playerPanels = new PlayerPanel[0];
 
             this.mainMenu = createMainMenu();
             this.mainMenu.RepaintRequired += invokeRepaintRequired;
@@ -53,20 +45,11 @@ namespace Tetris
             this.GameOverMenu.HoverButtonDelegate += mainMenu_HoverButton;
             this.GameOverMenu.ButtonClick += GameOverMenu_ButtonClicked;
 
-            additionalPanel = new AdditionalPanel();
-
-            field = new Field(rows: 18, columns: 9, padding: 50);
-            field.NewFiguerCreated += Field_NewFiguerCreated;
-            field.LinesRemoved += Field_LinesRemoved;
-
-            MoveDownTimer = new Timer();
-            MoveDownTimer.Tick += Timer_Tick;
-
             secondsTimer = new Timer();
             secondsTimer.Interval = 1000;
             secondsTimer.Tick += secondsTimer_Tick;
         }
-        /*
+
         public void Dispose()
         {
             this.mainMenu.RepaintRequired -= invokeRepaintRequired;
@@ -80,19 +63,18 @@ namespace Tetris
                 secondsTimer.Dispose();
                 secondsTimer = null;
             }
-        */
+        }
 
-        private void GameOverMenu_ButtonClicked(int Buttonindex)
+        private MainMenu createMainMenu()
         {
-            if (Buttonindex == 0)
+            var Buttontexts = new string[]
             {
-                start();
-            }
-            else if (Buttonindex == 1)
-            {
-                stop();
-                gamesState = GamesState.Menu;
-            }
+                "Одиночная игра",
+                "Хардкор",
+                "Мультиплеер",
+                "Выход"
+             };
+            return new MainMenu(Buttontexts, 170, 38, 20, true, Config.MainMenu);
         }
 
         private MainMenu createGameOverMenu()
@@ -108,45 +90,26 @@ namespace Tetris
             return res;
         }
 
-        private MainMenu createMainMenu()
+        private void start(int playscount)
         {
-            var Buttontexts = new string[]
+            foreach (var pnl in playerPanels)
             {
-                "Одиночная игра",
-                "Хардкор",
-                "Мультиплеер",
-                "Выход"
-             };
-            return new MainMenu(Buttontexts, 170, 38, 20, true, Config.MainMenu);
-        }
-
-        private void start()
-        {
+                pnl.Dispose();
+            }
+            playerPanels = new PlayerPanel[playscount];
+            for (int i = 0; i < playerPanels.Length; i++)
+            {
+                var pnl = new PlayerPanel(rect);
+                playerPanels[i] = pnl;
+            }
             gamesState = GamesState.Gaming;
             cursor = Cursors.Arrow;
-            MoveDownTimer.Start();
             secondsTimer.Start();
-            normalSpeed = 200;
-            spacespeed = 30;
             secondsPassed = 0;
-            scores = 0;
-            levels = 1;
-            linesRemoved = 0;
-
-            additionalPanel.setScores(scores);
-            additionalPanel.setLevel(levels);
-            additionalPanel.setLinesRemoved(linesRemoved);
-
-            field.start();
-
-            MoveDownTimer.Interval = normalSpeed;
-            secondsTimer.Start();
-            MoveDownTimer.Start();
         }
 
         private void stop()
         {
-            MoveDownTimer.Stop();
             secondsTimer.Stop();
             changeCursor(Cursors.Arrow);
         }
@@ -155,16 +118,33 @@ namespace Tetris
         {
             if (Buttonindex == 0)
             {
-                start();
+                start(1);
             }
             else if (Buttonindex == 1)
             {
-                //TetrisOneLove.kill();
-                start();
+                TetrisOneLove.kill();
+                start(5);
             }
             else if (Buttonindex == 2)
             {
+                
+            }
+            else if (Buttonindex == 3)
+            {
                 Application.Exit();
+            }
+        }
+
+        private void GameOverMenu_ButtonClicked(int Buttonindex)
+        {
+            if (Buttonindex == 0)
+            {
+                start(1);
+            }
+            else if (Buttonindex == 1)
+            {
+                stop();
+                gamesState = GamesState.Menu;
             }
         }
 
@@ -186,29 +166,10 @@ namespace Tetris
             }
         }
 
-        private void Field_LinesRemoved(int removedCount)
-        {
-            linesRemoved += removedCount;
-            scores += removedCount * 100;
-            additionalPanel.setLinesRemoved(linesRemoved);
-            additionalPanel.setScores(scores);
-            invokeRepaintRequired();
-        }
-
         private void secondsTimer_Tick(object sender, EventArgs e)
         {
             secondsPassed++;
             //PlayerPanel.setSecondsPassed(secondsPassed);
-            additionalPanel.setSecondsPassed(secondsPassed);
-        }
-
-        private void Field_NewFiguerCreated(Figure current, Figure next)
-        {
-            additionalPanel.setFigure(next);
-            if (MoveDownTimer != null)
-            {
-                MoveDownTimer.Interval = normalSpeed;
-            }
         }
 
         private void invokeRepaintRequired()
@@ -216,25 +177,6 @@ namespace Tetris
             if (RepaintRequired != null)
             {
                 RepaintRequired();
-            }
-        }
-
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            if(!field.moveFigureDown())
-            {
-                stop();              
-                gamesState = GamesState.GameOver;
-            }
-            invokeRepaintRequired();
-        }
-
-        public void Dispose()
-        {
-            if (MoveDownTimer != null)
-            {
-                MoveDownTimer.Dispose();
-                MoveDownTimer = null;
             }
         }
 
@@ -254,48 +196,8 @@ namespace Tetris
                 }
                 if (gamesState == GamesState.Gaming)
                 {
-                    field.display(g, containerSize);
+                    //PlayerPanel.display(g, ClientRect, gamesState);
                 }
-                //PlayerPanel.display(g, clientRect, gamesState);
-                var FieldArea = field.GetRectangle(containerSize);
-                var additionalPanelArea = new Rectangle(FieldArea.Right, FieldArea.Top,
-                        containerSize.Width - FieldArea.Right, FieldArea.Height);
-                    additionalPanel.display(g, additionalPanelArea, gamesState);
-            }
-        }
-
-        public void toLeft()
-        {
-            if (gamesState == GamesState.Gaming)
-            {
-                field.toLeft();
-                invokeRepaintRequired();
-            }
-        }
-
-        public void toRight()
-        {
-            if (gamesState == GamesState.Gaming)
-            {
-                field.toRight();
-                invokeRepaintRequired();
-            }
-        }
-
-        public void rotate()
-        {
-            if (gamesState == GamesState.Gaming)
-            {
-                field.rotate();
-                invokeRepaintRequired();
-            }
-        }
-
-        public void quick()
-        {
-            if (gamesState == GamesState.Gaming)
-            {
-                MoveDownTimer.Interval = spacespeed;
             }
         }
 
@@ -325,7 +227,26 @@ namespace Tetris
 
         public void setRectangle(Rectangle rect)
         {
+            this.rect = rect;
             mainMenu.setRectangle(rect);
+            setRectForPlayerPanels();
+        }
+
+        private void setRectForPlayerPanels()
+        {
+            int cols = playerPanels.Length >= 3 ? 3 : playerPanels.Length;
+            int rows = (int)Math.Ceiling((double)playerPanels.Length / cols);
+            int playerPanelWidth = this.rect.Width / cols;
+            int playerPanelHeight = this.rect.Width / rows;
+            for (int i = 0; i < playerPanels.Length; i++)
+            {
+                var pnl = playerPanels[i];
+                int col = i % 3;
+                int row = i / 3;
+                var rect = new Rectangle(this.rect.Left + this.rect.Width * col / cols, this.rect.Top + this.rect.Width * row / cols,
+                    playerPanelWidth, playerPanelHeight);
+                pnl.setRectangle(rect);
+            }
         }
     }
 }

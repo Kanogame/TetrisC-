@@ -33,11 +33,6 @@ namespace Tetris
             this.keyboardtimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
-            // keyboardtimer
-            // 
-            this.keyboardtimer.Interval = 105;
-            this.keyboardtimer.Tick += new System.EventHandler(this.keyboardtimer_Tick);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
