@@ -55,7 +55,7 @@ namespace Tetris
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-
+          game.keyDown(e.KeyCode);
         }
 
         private void SetHorizontalMovement(HorizontalMovement horizontalMovement)
@@ -65,7 +65,7 @@ namespace Tetris
 
         private void MainForm_KeyUp(object sender, KeyEventArgs e)
         {
-
+            game.keyUp(e.KeyCode);
         }
 
         private void MakeMovement(HorizontalMovement horizontalMovement)

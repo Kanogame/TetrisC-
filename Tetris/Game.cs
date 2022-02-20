@@ -50,6 +50,30 @@ namespace Tetris
             secondsTimer.Tick += secondsTimer_Tick;
         }
 
+        internal void keyDown(Keys Key)
+        {
+            if (gamesState != GamesState.Gaming)
+            {
+                return;
+            }
+            foreach (var pnl in playerPanels)
+            {
+                pnl.keyDown(Key);
+            }
+        }
+
+        internal void keyUp(Keys Key)
+        {
+            if (gamesState != GamesState.Gaming)
+            {
+                return;
+            }
+            foreach (var pnl in playerPanels)
+            {
+                pnl.KeyUp(Key);
+            }
+        }
+
         public void Dispose()
         {
             this.mainMenu.RepaintRequired -= invokeRepaintRequired;
@@ -90,22 +114,51 @@ namespace Tetris
             return res;
         }
 
-        private void start(int playscount)
+        private void start(int PlayersCount)
         {
             foreach (var pnl in playerPanels)
             {
+                pnl.RepaintRequired -= invokeRepaintRequired;
                 pnl.Dispose();
             }
-            playerPanels = new PlayerPanel[playscount];
+            playerPanels = new PlayerPanel[PlayersCount];
             for (int i = 0; i < playerPanels.Length; i++)
             {
-                var pnl = new PlayerPanel(rect);
+                KeyboardManager kbdManager;
+                if (PlayersCount == 1)
+                {
+                    kbdManager = Config.keyboardManagers[2];
+                }
+                else if (PlayersCount == 2)
+                {
+                    if (i == 0)
+                    {
+                        kbdManager = Config.keyboardManagers[0];
+                    }
+                    else
+                    {
+                        kbdManager = Config.keyboardManagers[2];
+                    }
+                }
+                else
+                {
+                    int kbdIndex = i % Config.keyboardManagers.Length;
+                    kbdManager = Config.keyboardManagers[kbdIndex];
+                }
+                var pnl = new PlayerPanel(new Rectangle(0,0,100,100), kbdManager);
+                pnl.RepaintRequired += invokeRepaintRequired;
                 playerPanels[i] = pnl;
             }
+            setRectForPlayerPanels();
             gamesState = GamesState.Gaming;
             cursor = Cursors.Arrow;
-            secondsTimer.Start();
             secondsPassed = 0;
+            secondsTimer.Start();
+            foreach (var pnl in playerPanels)
+            {
+                pnl.start();
+            }
+            invokeRepaintRequired();
         }
 
         private void stop()
@@ -122,12 +175,12 @@ namespace Tetris
             }
             else if (Buttonindex == 1)
             {
-                TetrisOneLove.kill();
+                //TetrisOneLove.kill();
                 start(5);
             }
             else if (Buttonindex == 2)
             {
-                
+                start(3);
             }
             else if (Buttonindex == 3)
             {
@@ -169,7 +222,10 @@ namespace Tetris
         private void secondsTimer_Tick(object sender, EventArgs e)
         {
             secondsPassed++;
-            //PlayerPanel.setSecondsPassed(secondsPassed);
+            foreach (var pnl in playerPanels)
+            {
+                pnl.setSecondsPassed(secondsPassed);
+            }
         }
 
         private void invokeRepaintRequired()
@@ -182,8 +238,6 @@ namespace Tetris
 
         public void display(Graphics g, Size containerSize)
         {
-            var ClientRect = new Rectangle(0, 0, containerSize.Width, containerSize.Height);
-
             if (gamesState == GamesState.Menu)
             {
                 mainMenu.display(g);
@@ -191,12 +245,16 @@ namespace Tetris
             {
                 if (gamesState == GamesState.GameOver)
                 {
-                    GameOverMenu.display(g);
+                    var ClientRect = new Rectangle(0, 0, containerSize.Width, containerSize.Height);
                     ImageDrawer.fit(g, ClientRect, Config.GameOverImage);
                 }
-                if (gamesState == GamesState.Gaming)
+                foreach (var pnl in playerPanels)
                 {
-                    //PlayerPanel.display(g, ClientRect, gamesState);
+                    pnl.display(g, gamesState);
+                }
+                if (gamesState == GamesState.GameOver)
+                {
+                    GameOverMenu.display(g);
                 }
             }
         }
@@ -234,16 +292,20 @@ namespace Tetris
 
         private void setRectForPlayerPanels()
         {
+            if (playerPanels.Length <= 0)
+            {
+                return;
+            }    
             int cols = playerPanels.Length >= 3 ? 3 : playerPanels.Length;
             int rows = (int)Math.Ceiling((double)playerPanels.Length / cols);
             int playerPanelWidth = this.rect.Width / cols;
-            int playerPanelHeight = this.rect.Width / rows;
+            int playerPanelHeight = this.rect.Height / rows;
             for (int i = 0; i < playerPanels.Length; i++)
             {
                 var pnl = playerPanels[i];
                 int col = i % 3;
                 int row = i / 3;
-                var rect = new Rectangle(this.rect.Left + this.rect.Width * col / cols, this.rect.Top + this.rect.Width * row / cols,
+                var rect = new Rectangle(this.rect.Left + this.rect.Width * col / cols, this.rect.Top + this.rect.Height * row / rows,
                     playerPanelWidth, playerPanelHeight);
                 pnl.setRectangle(rect);
             }

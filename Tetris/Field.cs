@@ -128,7 +128,7 @@ namespace Tetris
 
         public void setRectangle(Rectangle rect)
         {
-            this.rect = rect;
+            this.cellSize = getCellSize(rect.Size);
             var r = getFieldAreaRectangle(rect.Size);
             this.FieldArea = new Rectangle(rect.Left + r.Left, rect.Top + r.Top, r.Width, r.Height);
         }

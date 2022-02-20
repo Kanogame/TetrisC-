@@ -8,10 +8,11 @@ using System.Windows.Forms;
 
 namespace Tetris
 {
-    public class PlayerPanel
+    public class PlayerPanel : IDisposable
     {
         private AdditionalPanel additionalPanel;
         private Field field;
+        private KeyboardManager KeyboardManager;
 
         private Timer MoveDownTimer;
         private int normalSpeed;
@@ -24,8 +25,14 @@ namespace Tetris
         public event Action RepaintRequired;
         public event Action GameOverForPlayer;
 
-        public PlayerPanel(Rectangle rect)
+        public PlayerPanel(Rectangle rect, KeyboardManager keyboardManager)
         {
+            this.KeyboardManager = keyboardManager;
+            this.KeyboardManager.Toleft += toLeft;
+            this.KeyboardManager.ToRight += toRight;
+            this.KeyboardManager.Rotate += rotate;
+            this.KeyboardManager.Quick += quick;
+
             additionalPanel = new AdditionalPanel();
 
             field = new Field(rows: 18, columns: 9, padding: 50);
@@ -37,7 +44,6 @@ namespace Tetris
 
             setRectangle(rect);
         }
-
         public void setRectangle(Rectangle rect)
         {
             field.setRectangle(rect);
@@ -119,8 +125,15 @@ namespace Tetris
 
         public void Dispose()
         {
+            this.KeyboardManager.Toleft -= toLeft;
+            this.KeyboardManager.ToRight -= toRight;
+            this.KeyboardManager.Rotate -= rotate;
+            this.KeyboardManager.Quick -= quick;
+            field.NewFiguerCreated -= Field_NewFiguerCreated;
+            field.LinesRemoved -= Field_LinesRemoved;
             if (MoveDownTimer != null)
             {
+                MoveDownTimer.Tick -= Timer_Tick;
                 MoveDownTimer.Dispose();
                 MoveDownTimer = null;
             }
@@ -149,11 +162,26 @@ namespace Tetris
                 MoveDownTimer.Interval = spacespeed;
         }
         
-        public void display(Graphics g, Rectangle rect, GamesState gamesState)
+        public void display(Graphics g, GamesState gamesState)
         {
             field.display(g);
             additionalPanel.display(g, gamesState);
         }
         
+        public void keyDown(Keys key)
+        {
+            if (KeyboardManager != null)
+            {
+                KeyboardManager.keyDown(key);
+            }
+        }
+
+        public void KeyUp(Keys key)
+        {
+            if (KeyboardManager != null)
+            {
+                KeyboardManager.keyUp(key);
+            }
+        }
     }
 }

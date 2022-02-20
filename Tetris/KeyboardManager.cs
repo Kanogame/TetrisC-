@@ -19,6 +19,28 @@ namespace Tetris
         private bool toLeft;
         private Timer keyboardTimer;
 
+        public event Action Toleft;
+        public event Action ToRight;
+        public event Action Quick;
+        public event Action Rotate;
+
+        public void invokeToLeft()
+        {
+            Toleft?.Invoke();
+        }
+        public void invokeToRight()
+        {
+            ToRight?.Invoke();
+        }
+        public void invokeQuick()
+        {
+            Quick?.Invoke();
+        }
+        public void invokeRotate()
+        {
+            Rotate?.Invoke();
+        }
+
         public KeyboardManager(Keys up, Keys left,
             Keys right, Keys space)
         {
@@ -56,11 +78,11 @@ namespace Tetris
             }
             else if (key == up)
             {
-                //game.rotate();
+                invokeRotate();
             }
             else if (key == space)
             {
-                //game.quick();
+                invokeQuick();
             }
         }
 
@@ -110,11 +132,11 @@ namespace Tetris
         {
             if (horizontalMovement == HorizontalMovement.ToLeft)
             {
-                //game.toLeft();
+                invokeToLeft();
             }
             else if (horizontalMovement == HorizontalMovement.ToRight)
             {
-                //game.toRight();
+                invokeToRight();
             }
         }
     }
