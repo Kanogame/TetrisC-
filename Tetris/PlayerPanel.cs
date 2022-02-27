@@ -13,10 +13,13 @@ namespace Tetris
         private AdditionalPanel additionalPanel;
         private Field field;
         private KeyboardManager KeyboardManager;
+        private PlayerPanelLayout layout;
 
         private Timer MoveDownTimer;
         private int normalSpeed;
         private int spacespeed;
+        private bool hideAdditionalPanel;
+        private Rectangle rect;
 
         private int scores;
         private int levels;
@@ -25,13 +28,15 @@ namespace Tetris
         public event Action RepaintRequired;
         public event Action GameOverForPlayer;
 
-        public PlayerPanel(Rectangle rect, KeyboardManager keyboardManager)
+        public PlayerPanel(Rectangle rect, KeyboardManager keyboardManager, PlayerPanelLayout layout)
         {
+            this.layout = layout;
             this.KeyboardManager = keyboardManager;
             this.KeyboardManager.Toleft += toLeft;
             this.KeyboardManager.ToRight += toRight;
             this.KeyboardManager.Rotate += rotate;
             this.KeyboardManager.Quick += quick;
+            this.KeyboardManager.ToggleAdditionalPanel += KeyboardManager_ToggleAdditionalPanel;
 
             additionalPanel = new AdditionalPanel();
 
@@ -44,13 +49,48 @@ namespace Tetris
 
             setRectangle(rect);
         }
+
+        private void KeyboardManager_ToggleAdditionalPanel()
+        {
+            hideAdditionalPanel = !hideAdditionalPanel;
+            setRectangle(this.rect);
+            invokeRepaintRequired();
+        }
+
         public void setRectangle(Rectangle rect)
         {
-            field.setRectangle(rect);
-            var FieldArea = field.getFieldArea();
-            var additionalPanelArea = new Rectangle(FieldArea.Right, FieldArea.Top,
-                    rect.Right - FieldArea.Right, FieldArea.Height);
-            additionalPanel.setRectangle(additionalPanelArea);
+            this.rect = rect;
+            if (hideAdditionalPanel)
+            {
+                field.setRectangle(rect);
+                return;
+            }
+            int additionalPanelwight = 170;
+            int topMargin = 25;
+            if (layout == PlayerPanelLayout.OnePlayer)
+            {
+                field.setRectangle(rect);
+                var FieldArea = field.getFieldArea();
+                var additionalPanelArea = new Rectangle(FieldArea.Right, FieldArea.Top,
+                        rect.Right - FieldArea.Right, FieldArea.Height);
+                additionalPanel.setRectangle(additionalPanelArea);
+            }
+            else if (layout == PlayerPanelLayout.FieldOnLeft)
+            {
+                var fieldRect = new Rectangle(rect.X, rect.Y, rect.Width - additionalPanelwight, rect.Height);
+                field.setRectangle(fieldRect);
+                var additionalPanelArea = new Rectangle(rect.Right - additionalPanelwight, rect.Y + topMargin,
+                        additionalPanelwight, rect.Height - topMargin);
+                additionalPanel.setRectangle(additionalPanelArea);
+            }
+            else if (layout == PlayerPanelLayout.FieldonRight)
+            {
+                var fieldRect = new Rectangle(rect.X + additionalPanelwight, rect.Y, rect.Width - additionalPanelwight, rect.Height);
+                field.setRectangle(fieldRect);
+                var additionalPanelArea = new Rectangle(rect.X, rect.Y + topMargin,
+                        additionalPanelwight, rect.Height - topMargin);
+                additionalPanel.setRectangle(additionalPanelArea);
+            }
         }
 
         public void  start()
@@ -80,8 +120,14 @@ namespace Tetris
         {
             linesRemoved += removedCount;
             scores += removedCount * 100;
+            if (linesRemoved % 5 == 0)
+            {
+                levels++;
+                normalSpeed = (int)(normalSpeed / 1.2);
+            }
             additionalPanel.setLinesRemoved(linesRemoved);
             additionalPanel.setScores(scores);
+            additionalPanel.setLevel(levels);
             invokeRepaintRequired();
         }
         public void setSecondsPassed(int secondsPassed)
@@ -129,6 +175,7 @@ namespace Tetris
             this.KeyboardManager.ToRight -= toRight;
             this.KeyboardManager.Rotate -= rotate;
             this.KeyboardManager.Quick -= quick;
+            this.KeyboardManager.ToggleAdditionalPanel -= KeyboardManager_ToggleAdditionalPanel;
             field.NewFiguerCreated -= Field_NewFiguerCreated;
             field.LinesRemoved -= Field_LinesRemoved;
             if (MoveDownTimer != null)
@@ -165,7 +212,10 @@ namespace Tetris
         public void display(Graphics g, GamesState gamesState)
         {
             field.display(g);
-            additionalPanel.display(g, gamesState);
+            if (!hideAdditionalPanel)
+            {
+                additionalPanel.display(g, gamesState);
+            }
         }
         
         public void keyDown(Keys key)

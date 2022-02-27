@@ -67,6 +67,7 @@
     </Compile>
     <Compile Include="NewFigureCreatedDelegate.cs" />
     <Compile Include="PlayerPanel.cs" />
+    <Compile Include="PlayerPanelLayout.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TetrisOneLove.cs" />

@@ -124,28 +124,33 @@ namespace Tetris
             playerPanels = new PlayerPanel[PlayersCount];
             for (int i = 0; i < playerPanels.Length; i++)
             {
+                PlayerPanelLayout layout;
                 KeyboardManager kbdManager;
                 if (PlayersCount == 1)
                 {
                     kbdManager = Config.keyboardManagers[2];
+                    layout = PlayerPanelLayout.OnePlayer;
                 }
                 else if (PlayersCount == 2)
                 {
                     if (i == 0)
                     {
                         kbdManager = Config.keyboardManagers[0];
+                        layout = PlayerPanelLayout.FieldOnLeft;
                     }
                     else
                     {
                         kbdManager = Config.keyboardManagers[2];
+                        layout = PlayerPanelLayout.FieldonRight;
                     }
                 }
                 else
                 {
                     int kbdIndex = i % Config.keyboardManagers.Length;
                     kbdManager = Config.keyboardManagers[kbdIndex];
+                    layout = PlayerPanelLayout.FieldOnLeft;
                 }
-                var pnl = new PlayerPanel(new Rectangle(0,0,100,100), kbdManager);
+                var pnl = new PlayerPanel(new Rectangle(0,0,100,100), kbdManager, layout);
                 pnl.RepaintRequired += invokeRepaintRequired;
                 playerPanels[i] = pnl;
             }
@@ -176,11 +181,11 @@ namespace Tetris
             else if (Buttonindex == 1)
             {
                 //TetrisOneLove.kill();
-                start(5);
+                start(3);
             }
             else if (Buttonindex == 2)
             {
-                start(3);
+                start(2);
             }
             else if (Buttonindex == 3)
             {

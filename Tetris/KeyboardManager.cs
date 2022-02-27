@@ -23,6 +23,7 @@ namespace Tetris
         public event Action ToRight;
         public event Action Quick;
         public event Action Rotate;
+        public event Action ToggleAdditionalPanel;
 
         public void invokeToLeft()
         {
@@ -83,6 +84,18 @@ namespace Tetris
             else if (key == space)
             {
                 invokeQuick();
+            }
+            else if (key == Keys.F4)
+            {
+                invokeToggleAdditionalPanel();
+            }
+        }
+
+        private void invokeToggleAdditionalPanel()
+        {
+            if (ToggleAdditionalPanel != null)
+            {
+                ToggleAdditionalPanel();
             }
         }
 

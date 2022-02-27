@@ -21,3 +21,16 @@ C:\ученики\Иванов Александр\TERIS\Tetris\obj\Debug\Tetris.
 C:\ученики\Иванов Александр\TERIS\Tetris\bin\Debug\icon-timer.png
 C:\ученики\Иванов Александр\TERIS\Tetris\bin\Debug\228-2283685_angular2-tetris-transparent-game-over-png.png
 C:\ученики\Иванов Александр\TERIS\Tetris\bin\Debug\2020_04_tetris-8k-hd-iphone-pc-photos-pictures-backgrounds.jpg
+C:\TEMP\ученики\Иванов Александр\TERIS\Tetris\bin\Debug\2020_04_tetris-8k-hd-iphone-pc-photos-pictures-backgrounds.jpg
+C:\TEMP\ученики\Иванов Александр\TERIS\Tetris\bin\Debug\228-2283685_angular2-tetris-transparent-game-over-png.png
+C:\TEMP\ученики\Иванов Александр\TERIS\Tetris\bin\Debug\icon-timer.png
+C:\TEMP\ученики\Иванов Александр\TERIS\Tetris\bin\Debug\Tetris.exe.config
+C:\TEMP\ученики\Иванов Александр\TERIS\Tetris\bin\Debug\Tetris.exe
+C:\TEMP\ученики\Иванов Александр\TERIS\Tetris\bin\Debug\Tetris.pdb
+C:\TEMP\ученики\Иванов Александр\TERIS\Tetris\obj\Debug\Tetris.csproj.AssemblyReference.cache
+C:\TEMP\ученики\Иванов Александр\TERIS\Tetris\obj\Debug\Tetris.MainForm.resources
+C:\TEMP\ученики\Иванов Александр\TERIS\Tetris\obj\Debug\Tetris.Properties.Resources.resources
+C:\TEMP\ученики\Иванов Александр\TERIS\Tetris\obj\Debug\Tetris.csproj.GenerateResource.cache
+C:\TEMP\ученики\Иванов Александр\TERIS\Tetris\obj\Debug\Tetris.csproj.CoreCompileInputs.cache
+C:\TEMP\ученики\Иванов Александр\TERIS\Tetris\obj\Debug\Tetris.exe
+C:\TEMP\ученики\Иванов Александр\TERIS\Tetris\obj\Debug\Tetris.pdb
