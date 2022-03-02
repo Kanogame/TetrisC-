@@ -262,20 +262,19 @@ namespace Tetris
                             {
                                 int realY = posY + i;
                                 int realX = posX + j;
-                                if (realY < 0)
-                                {
-                                    continue;
-                                }
-                                if (realY < 0 || realX < 0
+                                if (realX < 0
                                     || realX >= columns
                                     || realY >= rows
                                     // Если там уже есть блок
-                                    || data[realY, realX] != -1)
+                                    || (realY >= 0 && data[realY, realX] != -1))
                                 {
                                     // Выбрасываем ошибку
                                     throw new Exception("figure cannot be placed");
                                 }
-                                res[realY, realX] = f[i, j];
+                                if (realY >= 0)
+                                {
+                                    res[realY, realX] = f[i, j];
+                                }
                             }
                         }
                     }

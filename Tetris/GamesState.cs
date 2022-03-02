@@ -11,5 +11,6 @@ namespace Tetris
         Menu,
         Gaming,
         GameOver,
+        Choose,
     }
 }

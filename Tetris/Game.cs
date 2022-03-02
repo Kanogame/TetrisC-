@@ -15,11 +15,13 @@ namespace Tetris
 
         private MainMenu mainMenu;
         private MainMenu GameOverMenu;
+        private MainMenu ChoosePlayersCount;
         private TetrisOneLove TetrisOneLove;
         private PlayerPanel[] playerPanels;
         private Rectangle rect;
 
         private int secondsPassed = 0;
+        private int playerleft;
 
         private GamesState gamesState;
         private Cursor cursor;
@@ -82,6 +84,9 @@ namespace Tetris
             this.GameOverMenu.RepaintRequired -= invokeRepaintRequired;
             this.GameOverMenu.HoverButtonDelegate -= mainMenu_HoverButton;
             this.GameOverMenu.ButtonClick -= GameOverMenu_ButtonClicked;
+            this.ChoosePlayersCount.RepaintRequired -= invokeRepaintRequired;
+            this.ChoosePlayersCount.HoverButtonDelegate -= mainMenu_HoverButton;
+            this.ChoosePlayersCount.ButtonClick -= ChoosePlayersCount_ButtonClicked;
             if (secondsTimer != null)
             {
                 secondsTimer.Dispose();
@@ -89,6 +94,36 @@ namespace Tetris
             }
         }
 
+        private void ChoosePlayersCount_ButtonClicked(int Buttonindex)
+        {
+            if (Buttonindex == 0)
+            {
+                start(1);
+            }
+            else if (Buttonindex == 1)
+            {
+                start(3);
+            }
+            else if (Buttonindex == 2)
+            {
+                start(2);
+            }
+            else if (Buttonindex == 3)
+            {
+                Application.Exit();
+            }
+        }
+        private MainMenu createChoosePlayersCount()
+        {
+            var Buttontexts = new string[]
+            {
+                "1",
+                "2",
+                "3",
+                "4"
+             };
+            return new MainMenu(Buttontexts, 170, 38, 20, true, Config.MainMenu);
+        }
         private MainMenu createMainMenu()
         {
             var Buttontexts = new string[]
@@ -119,6 +154,7 @@ namespace Tetris
             foreach (var pnl in playerPanels)
             {
                 pnl.RepaintRequired -= invokeRepaintRequired;
+                pnl.GameOverForPlayer -= pnl_GameOverForPlayer;
                 pnl.Dispose();
             }
             playerPanels = new PlayerPanel[PlayersCount];
@@ -152,11 +188,13 @@ namespace Tetris
                 }
                 var pnl = new PlayerPanel(new Rectangle(0,0,100,100), kbdManager, layout);
                 pnl.RepaintRequired += invokeRepaintRequired;
+                pnl.GameOverForPlayer += pnl_GameOverForPlayer;
                 playerPanels[i] = pnl;
             }
             setRectForPlayerPanels();
             gamesState = GamesState.Gaming;
             cursor = Cursors.Arrow;
+            playerleft = PlayersCount;
             secondsPassed = 0;
             secondsTimer.Start();
             foreach (var pnl in playerPanels)
@@ -164,6 +202,16 @@ namespace Tetris
                 pnl.start();
             }
             invokeRepaintRequired();
+        }
+
+        private void pnl_GameOverForPlayer()
+        {
+            playerleft--;
+            if (playerleft <= 0)
+            {
+                stop();
+                gamesState = GamesState.GameOver;
+            }
         }
 
         private void stop()
@@ -197,7 +245,7 @@ namespace Tetris
         {
             if (Buttonindex == 0)
             {
-                start(1);
+                start(playerPanels.Length);
             }
             else if (Buttonindex == 1)
             {
