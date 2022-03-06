@@ -15,7 +15,7 @@ namespace Tetris
 
         private MainMenu mainMenu;
         private MainMenu GameOverMenu;
-        private MainMenu ChoosePlayersCount;
+        private MainMenu choosePlayersCountPanel;
         private TetrisOneLove TetrisOneLove;
         private PlayerPanel[] playerPanels;
         private Rectangle rect;
@@ -47,33 +47,14 @@ namespace Tetris
             this.GameOverMenu.HoverButtonDelegate += mainMenu_HoverButton;
             this.GameOverMenu.ButtonClick += GameOverMenu_ButtonClicked;
 
+            this.choosePlayersCountPanel = createChoosePlayersCount();
+            this.choosePlayersCountPanel.RepaintRequired += invokeRepaintRequired;
+            this.choosePlayersCountPanel.HoverButtonDelegate += mainMenu_HoverButton;
+            this.choosePlayersCountPanel.ButtonClick += ChoosePlayersCount_ButtonClicked;
+
             secondsTimer = new Timer();
             secondsTimer.Interval = 1000;
             secondsTimer.Tick += secondsTimer_Tick;
-        }
-
-        internal void keyDown(Keys Key)
-        {
-            if (gamesState != GamesState.Gaming)
-            {
-                return;
-            }
-            foreach (var pnl in playerPanels)
-            {
-                pnl.keyDown(Key);
-            }
-        }
-
-        internal void keyUp(Keys Key)
-        {
-            if (gamesState != GamesState.Gaming)
-            {
-                return;
-            }
-            foreach (var pnl in playerPanels)
-            {
-                pnl.KeyUp(Key);
-            }
         }
 
         public void Dispose()
@@ -84,9 +65,9 @@ namespace Tetris
             this.GameOverMenu.RepaintRequired -= invokeRepaintRequired;
             this.GameOverMenu.HoverButtonDelegate -= mainMenu_HoverButton;
             this.GameOverMenu.ButtonClick -= GameOverMenu_ButtonClicked;
-            this.ChoosePlayersCount.RepaintRequired -= invokeRepaintRequired;
-            this.ChoosePlayersCount.HoverButtonDelegate -= mainMenu_HoverButton;
-            this.ChoosePlayersCount.ButtonClick -= ChoosePlayersCount_ButtonClicked;
+            this.choosePlayersCountPanel.RepaintRequired -= invokeRepaintRequired;
+            this.choosePlayersCountPanel.HoverButtonDelegate -= mainMenu_HoverButton;
+            this.choosePlayersCountPanel.ButtonClick -= ChoosePlayersCount_ButtonClicked;
             if (secondsTimer != null)
             {
                 secondsTimer.Dispose();
@@ -96,33 +77,40 @@ namespace Tetris
 
         private void ChoosePlayersCount_ButtonClicked(int Buttonindex)
         {
-            if (Buttonindex == 0)
+            if (Buttonindex == 3)
             {
-                start(1);
+                gamesState = GamesState.Menu;
+                return;
             }
-            else if (Buttonindex == 1)
+            else
             {
-                start(3);
-            }
-            else if (Buttonindex == 2)
-            {
-                start(2);
-            }
-            else if (Buttonindex == 3)
-            {
-                Application.Exit();
+                start(Buttonindex + 2);
             }
         }
         private MainMenu createChoosePlayersCount()
         {
             var Buttontexts = new string[]
             {
-                "1",
-                "2",
-                "3",
-                "4"
+                "Одиночная игра",
+                "Хардкор",
+                "Мультиплеер",
+                "Выход"
              };
             return new MainMenu(Buttontexts, 170, 38, 20, true, Config.MainMenu);
+           /*
+            var Buttontexts = new string[]
+             {
+                "2",
+                "3",
+                "4",
+                "Назад",
+             };
+            
+            var res = new MainMenu(Buttontexts, 100, 48, 15, false);
+            var rect = new Rectangle(40, 100, 140, 140);
+            res.setRectangle(rect);
+            return res;
+            */
         }
         private MainMenu createMainMenu()
         {
@@ -229,11 +217,12 @@ namespace Tetris
             else if (Buttonindex == 1)
             {
                 //TetrisOneLove.kill();
-                start(3);
+                start(1);
             }
             else if (Buttonindex == 2)
             {
-                start(2);
+                gamesState = GamesState.Choose;
+                invokeRepaintRequired();
             }
             else if (Buttonindex == 3)
             {
@@ -289,12 +278,41 @@ namespace Tetris
             }
         }
 
+        internal void keyDown(Keys Key)
+        {
+            if (gamesState != GamesState.Gaming)
+            {
+                return;
+            }
+            foreach (var pnl in playerPanels)
+            {
+                pnl.keyDown(Key);
+            }
+        }
+
+        internal void keyUp(Keys Key)
+        {
+            if (gamesState != GamesState.Gaming)
+            {
+                return;
+            }
+            foreach (var pnl in playerPanels)
+            {
+                pnl.KeyUp(Key);
+            }
+        }
+
         public void display(Graphics g, Size containerSize)
         {
             if (gamesState == GamesState.Menu)
             {
                 mainMenu.display(g);
-            }else
+            }
+            else if (gamesState == GamesState.Choose)
+            {
+                choosePlayersCountPanel.display(g);
+            }
+            else
             {
                 if (gamesState == GamesState.GameOver)
                 {

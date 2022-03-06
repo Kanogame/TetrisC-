@@ -9,7 +9,7 @@ namespace Tetris
 {
     public class MainMenu
     {
-
+        private GamesState gamesState;
         private string[] buttons;
         private Rectangle rect;
         private ButtonPositioner positioner;
@@ -37,7 +37,7 @@ namespace Tetris
             }
         }
 
-        private void invokeButtonClicked(int  Buttonindex)
+        private void invokeButtonClicked(int Buttonindex)
         {
             if (ButtonClick != null)
             {
@@ -73,7 +73,7 @@ namespace Tetris
             {
                 using (var b2 = new SolidBrush(Color.FromArgb(BtnPres, btnCll, btnCll, btnCll)))
                 {
-                    if (inmenu)
+                    if (gamesState == GamesState.Menu)
                     {
                         g.FillRectangle(b, positioner.PointX - 10, positioner.PointY - 40, positioner.ButtonWidth + 20, positioner.ButtonHeight * (buttons.Length + 2) + 35);
                     }
@@ -91,8 +91,8 @@ namespace Tetris
             }
             using (var f = new Font("Segoe UI", 14))
             {
-                if (inmenu)
-                g.DrawString("Tetris Kanogamesa", f, Brushes.Black, new PointF(positioner.PointX, positioner.PointY - 37));
+                if (gamesState == GamesState.Menu)
+                    g.DrawString("Tetris Kanogamesa", f, Brushes.Black, new PointF(positioner.PointX, positioner.PointY - 37));
             }
         }
         public void mouseMove(Point mousePos)
@@ -112,7 +112,7 @@ namespace Tetris
             if (btn != -1)
             {
                 invokeButtonClicked(btn);
-            }    
+            }
         }
 
         public event Action RepaintRequired;
