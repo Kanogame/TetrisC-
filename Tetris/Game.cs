@@ -82,35 +82,18 @@ namespace Tetris
                 gamesState = GamesState.Menu;
                 return;
             }
-            else
-            {
                 start(Buttonindex + 2);
-            }
         }
         private MainMenu createChoosePlayersCount()
         {
             var Buttontexts = new string[]
             {
-                "Одиночная игра",
-                "Хардкор",
-                "Мультиплеер",
-                "Выход"
-             };
-            return new MainMenu(Buttontexts, 170, 38, 20, true, Config.MainMenu);
-           /*
-            var Buttontexts = new string[]
-             {
                 "2",
                 "3",
                 "4",
-                "Назад",
+                "Назад"
              };
-            
-            var res = new MainMenu(Buttontexts, 100, 48, 15, false);
-            var rect = new Rectangle(40, 100, 140, 140);
-            res.setRectangle(rect);
-            return res;
-            */
+            return new MainMenu(Buttontexts, 170, 38, 20, true, Config.MainMenu);
         }
         private MainMenu createMainMenu()
         {
@@ -336,6 +319,10 @@ namespace Tetris
             {
                 mainMenu.mouseMove(mousePos);
             }
+            else if(gamesState == GamesState.Choose)
+            {
+                choosePlayersCountPanel.mouseMove(mousePos);
+            }
             else if (gamesState == GamesState.GameOver)
             {
                 GameOverMenu.mouseMove(mousePos);
@@ -348,6 +335,10 @@ namespace Tetris
             {
                 mainMenu.click(mousePos);
             }
+            else if(gamesState == GamesState.Choose)
+            {
+                choosePlayersCountPanel.click(mousePos);
+            }
             else if (gamesState == GamesState.GameOver)
             {
                 GameOverMenu.click(mousePos);
@@ -358,6 +349,7 @@ namespace Tetris
         {
             this.rect = rect;
             mainMenu.setRectangle(rect);
+            choosePlayersCountPanel.setRectangle(rect);
             setRectForPlayerPanels();
         }
 
