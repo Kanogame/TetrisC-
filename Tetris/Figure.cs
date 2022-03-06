@@ -174,6 +174,38 @@ namespace Tetris
                    { 0, 0, 0, 0, 0 },
                 },
             },
+            new int [][,] {
+                //  **
+                // **
+                new int[,] {
+                   { 0, 0, 0, 0, 0 },
+                   { 0, 0, 1, 0, 0 },
+                   { 0, 1, 1, 1, 0 },
+                   { 0, 1, 0, 0, 0 },
+                   { 0, 0, 0, 0, 0 },
+                },
+                new int[,] {
+                   { 0, 1, 1, 0, 0 },
+                   { 0, 0, 1, 1, 0 },
+                   { 0, 0, 1, 0, 0 },
+                   { 0, 0, 0, 0, 0 },
+                   { 0, 0, 0, 0, 0 },
+                },
+                new int[,] {
+                   { 0, 0, 0, 1, 0 },
+                   { 0, 1, 1, 1, 0 },
+                   { 0, 0, 1, 0, 0 },
+                   { 0, 0, 0, 0, 0 },
+                   { 0, 0, 0, 0, 0 },
+                },
+                new int[,] {
+                   { 0, 0, 1, 1, 0 },
+                   { 0, 1, 1, 0, 0 },
+                   { 0, 0, 1, 0, 0 },
+                   { 0, 0, 0, 0, 0 },
+                   { 0, 0, 0, 0, 0 },
+                },
+            },
             };
 
         private static Random random = new Random();
@@ -183,7 +215,23 @@ namespace Tetris
 
         public Figure()
         {
-            this.figureType = random.Next(figures.Length);
+            int i = random.Next(10000);
+            if (i == 29)
+            {
+                this.figureType = 7;
+            }
+            else
+            {
+                int j = random.Next(figures.Length);
+                if (j != 7)
+                {
+                    this.figureType = j;
+                }
+                else
+                {
+                    this.figureType = j - 1;
+                }
+            }
             this.rotation = random.Next(figures[this.figureType].Length);
             this.color = random.Next(Config.Colors.Length);
         }

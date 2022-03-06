@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Tetris
 {
-    public enum GamesState
-    {
-        Menu,
-        Gaming,
-        GameOver,
-        Choose,
-    }
+        public enum PlayerPanelLayout
+        {
+            OnePlayer,
+            FieldOnLeft,
+            FieldonRight
+        }
 }

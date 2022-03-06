@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,14 +8,18 @@ using System.Windows.Forms;
 
 namespace Tetris
 {
-    public class PlayerPanel
+    public class PlayerPanel : IDisposable
     {
         private AdditionalPanel additionalPanel;
         private Field field;
+        private KeyboardManager KeyboardManager;
+        private PlayerPanelLayout layout;
 
         private Timer MoveDownTimer;
         private int normalSpeed;
         private int spacespeed;
+        private bool hideAdditionalPanel;
+        private Rectangle rect;
 
         private int scores;
         private int levels;
@@ -23,8 +28,16 @@ namespace Tetris
         public event Action RepaintRequired;
         public event Action GameOverForPlayer;
 
-        public PlayerPanel()
+        public PlayerPanel(Rectangle rect, KeyboardManager keyboardManager, PlayerPanelLayout layout)
         {
+            this.layout = layout;
+            this.KeyboardManager = keyboardManager;
+            this.KeyboardManager.Toleft += toLeft;
+            this.KeyboardManager.ToRight += toRight;
+            this.KeyboardManager.Rotate += rotate;
+            this.KeyboardManager.Quick += quick;
+            this.KeyboardManager.ToggleAdditionalPanel += KeyboardManager_ToggleAdditionalPanel;
+
             additionalPanel = new AdditionalPanel();
 
             field = new Field(rows: 18, columns: 9, padding: 50);
@@ -33,6 +46,51 @@ namespace Tetris
 
             MoveDownTimer = new Timer();
             MoveDownTimer.Tick += Timer_Tick;
+
+            setRectangle(rect);
+        }
+
+        private void KeyboardManager_ToggleAdditionalPanel()
+        {
+            hideAdditionalPanel = !hideAdditionalPanel;
+            setRectangle(this.rect);
+            invokeRepaintRequired();
+        }
+
+        public void setRectangle(Rectangle rect)
+        {
+            this.rect = rect;
+            if (hideAdditionalPanel)
+            {
+                field.setRectangle(rect);
+                return;
+            }
+            int additionalPanelwight = 170;
+            int topMargin = 25;
+            if (layout == PlayerPanelLayout.OnePlayer)
+            {
+                field.setRectangle(rect);
+                var FieldArea = field.getFieldArea();
+                var additionalPanelArea = new Rectangle(FieldArea.Right, FieldArea.Top,
+                        rect.Right - FieldArea.Right, FieldArea.Height);
+                additionalPanel.setRectangle(additionalPanelArea);
+            }
+            else if (layout == PlayerPanelLayout.FieldOnLeft)
+            {
+                var fieldRect = new Rectangle(rect.X, rect.Y, rect.Width - additionalPanelwight, rect.Height);
+                field.setRectangle(fieldRect);
+                var additionalPanelArea = new Rectangle(rect.Right - additionalPanelwight, rect.Y + topMargin,
+                        additionalPanelwight, rect.Height - topMargin);
+                additionalPanel.setRectangle(additionalPanelArea);
+            }
+            else if (layout == PlayerPanelLayout.FieldonRight)
+            {
+                var fieldRect = new Rectangle(rect.X + additionalPanelwight, rect.Y, rect.Width - additionalPanelwight, rect.Height);
+                field.setRectangle(fieldRect);
+                var additionalPanelArea = new Rectangle(rect.X, rect.Y + topMargin,
+                        additionalPanelwight, rect.Height - topMargin);
+                additionalPanel.setRectangle(additionalPanelArea);
+            }
         }
 
         public void  start()
@@ -62,8 +120,14 @@ namespace Tetris
         {
             linesRemoved += removedCount;
             scores += removedCount * 100;
+            if (linesRemoved % 5 == 0)
+            {
+                levels++;
+                normalSpeed = (int)(normalSpeed / 1.2);
+            }
             additionalPanel.setLinesRemoved(linesRemoved);
             additionalPanel.setScores(scores);
+            additionalPanel.setLevel(levels);
             invokeRepaintRequired();
         }
         public void setSecondsPassed(int secondsPassed)
@@ -107,8 +171,16 @@ namespace Tetris
 
         public void Dispose()
         {
+            this.KeyboardManager.Toleft -= toLeft;
+            this.KeyboardManager.ToRight -= toRight;
+            this.KeyboardManager.Rotate -= rotate;
+            this.KeyboardManager.Quick -= quick;
+            this.KeyboardManager.ToggleAdditionalPanel -= KeyboardManager_ToggleAdditionalPanel;
+            field.NewFiguerCreated -= Field_NewFiguerCreated;
+            field.LinesRemoved -= Field_LinesRemoved;
             if (MoveDownTimer != null)
             {
+                MoveDownTimer.Tick -= Timer_Tick;
                 MoveDownTimer.Dispose();
                 MoveDownTimer = null;
             }
@@ -136,14 +208,30 @@ namespace Tetris
         {
                 MoveDownTimer.Interval = spacespeed;
         }
-        /*
-        public void display(Graphics g, Rectangle rect, GamesState gamesState)
+        
+        public void display(Graphics g, GamesState gamesState)
         {
-                var FieldArea = field.GetRectangle(containerSize);
-                var additionalPanelArea = new Rectangle(FieldArea.Right, FieldArea.Top,
-                        containerSize.Width - FieldArea.Right, FieldArea.Height);
-                additionalPanel.display(g, additionalPanelArea, gamesState);
+            field.display(g);
+            if (!hideAdditionalPanel)
+            {
+                additionalPanel.display(g, gamesState);
+            }
         }
-        */
+        
+        public void keyDown(Keys key)
+        {
+            if (KeyboardManager != null)
+            {
+                KeyboardManager.keyDown(key);
+            }
+        }
+
+        public void KeyUp(Keys key)
+        {
+            if (KeyboardManager != null)
+            {
+                KeyboardManager.keyUp(key);
+            }
+        }
     }
 }

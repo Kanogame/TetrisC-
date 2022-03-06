@@ -25,7 +25,7 @@ namespace Tetris
 
         public static Bitmap ClockImage
         {
-            get 
+            get
             {
                 if (_clockImage == null)
                 {
@@ -64,5 +64,19 @@ namespace Tetris
             }
         }
         private static Bitmap _mainmenu;
+
+        public static KeyboardManager[] keyboardManagers
+        {
+            get
+            {
+                return new KeyboardManager[]
+                {
+                    new KeyboardManager(Keys.W, Keys.A, Keys.D, Keys.S),
+                    new KeyboardManager(Keys.I, Keys.J, Keys.L, Keys.K),
+                    new KeyboardManager(Keys.Up, Keys.Left, Keys.Right, Keys.Space),
+                    new KeyboardManager(Keys.NumPad8, Keys.NumPad4, Keys.NumPad6, Keys.NumPad5),
+                };
+            }
+        }
     }
 }
