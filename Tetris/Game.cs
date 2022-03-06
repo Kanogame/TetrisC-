@@ -66,7 +66,6 @@ namespace Tetris
             secondsTimer.Interval = 1000;
             secondsTimer.Tick += secondsTimer_Tick;
         }
-        /*
         public void Dispose()
         {
             this.mainMenu.RepaintRequired -= invokeRepaintRequired;
@@ -80,7 +79,7 @@ namespace Tetris
                 secondsTimer.Dispose();
                 secondsTimer = null;
             }
-        */
+        }
 
         private void GameOverMenu_ButtonClicked(int Buttonindex)
         {
