@@ -1,3 +1,10 @@
-just a tetris on c# with sourse code and stuff
-This tetris have some cool features like: timer(yea, its a feature), next figure showcase, scores and even local multiplayer up to 4 players.
-you can use all of this code, whatever you want ;)
+## Tetris!
+A simple tetris written in C# and utilizing standard drawing capabilities of windows forms.
+#### It has several interesting features:
+* colors of shapes are randomized
+* spleet screen mode up to 3 players
+
+#### Here is some screenshots:
+
+![screenshot_1](https://github.com/Kanogame/TetrisC-/assets/60542595/48a3bdb7-da5f-4ecb-973a-9d975c8af559)
+![screenshot_2](https://github.com/Kanogame/TetrisC-/assets/60542595/901ba677-e4c6-43e6-9b3c-91777b8413f6)
